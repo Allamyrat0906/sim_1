@@ -1,0 +1,152 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Archimedes' Principle Simulation</title>
+    <style>
+      body {
+        font-family: Arial, sans-serif;
+        background-color: #f0f0f0;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        height: 100vh;
+        margin: 0;
+      }
+
+      .container {
+        background-color: white;
+        padding: 20px;
+        border-radius: 8px;
+        box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        text-align: center;
+      }
+
+      .input-group {
+        margin-bottom: 10px;
+      }
+
+      label {
+        margin-right: 10px;
+      }
+
+      button {
+        margin-top: 10px;
+        padding: 10px 20px;
+        font-size: 16px;
+      }
+
+      #result {
+        margin-top: 20px;
+        font-weight: bold;
+      }
+
+      canvas {
+        margin-top: 20px;
+        border: 1px solid #ccc;
+        background-color: #e0f7fa;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="container">
+      <h1>Archimedes' Principle Simulation</h1>
+      <div class="input-group">
+        <label for="objectVolume">Object Volume (m<sup>3</sup>):</label>
+        <input type="number" id="objectVolume" step="0.01" value="0.1" />
+      </div>
+      <div class="input-group">
+        <label for="objectDensity">Object Density (kg/m<sup>3</sup>):</label>
+        <input type="number" id="objectDensity" step="1" value="500" />
+      </div>
+      <div class="input-group">
+        <label for="fluidDensity">Fluid Density (kg/m<sup>3</sup>):</label>
+        <input type="number" id="fluidDensity" step="1" value="1000" />
+      </div>
+      <button onclick="simulateBuoyancy()">Simulate</button>
+      <div id="result"></div>
+      <canvas id="canvas" width="400" height="400"></canvas>
+    </div>
+    <script>
+      function simulateBuoyancy() {
+        const objectVolume = parseFloat(
+          document.getElementById("objectVolume").value
+        );
+        const objectDensity = parseFloat(
+          document.getElementById("objectDensity").value
+        );
+        const fluidDensity = parseFloat(
+          document.getElementById("fluidDensity").value
+        );
+
+        const g = 9.81; // gravitational acceleration (m/s^2)
+
+        const weight = objectDensity * objectVolume * g;
+        const buoyantForce = fluidDensity * objectVolume * g;
+
+        let state = "";
+        if (weight < buoyantForce) {
+          state = "Floats";
+        } else if (weight === buoyantForce) {
+          state = "Hovers";
+        } else {
+          state = "Sinks";
+        }
+
+        document.getElementById("result").innerText = `Weight: ${weight.toFixed(
+          2
+        )} N, Buoyant Force: ${buoyantForce.toFixed(2)} N, State: ${state}`;
+
+        drawSimulation(state);
+      }
+
+      function drawSimulation(state) {
+        const canvas = document.getElementById("canvas");
+        const ctx = canvas.getContext("2d");
+
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+        // Draw the fluid
+        ctx.fillStyle = "#00bcd4";
+        ctx.fillRect(0, 200, 400, 200);
+        ctx.strokeStyle = "#000";
+        ctx.strokeRect(
+          150,
+          state === "Floats"
+            ? 150
+            : state === "Hovers"
+            ? 200
+            : state === "Sinks"
+            ? 250
+            : 200,
+          100,
+          100
+        );
+        ctx.fillStyle = "rgba(255, 0, 0, 0.5)";
+        ctx.fillRect(
+          150,
+          state === "Floats"
+            ? 150
+            : state === "Hovers"
+            ? 200
+            : state === "Sinks"
+            ? 250
+            : 200,
+          100,
+          100
+        );
+
+        // Add labels
+        ctx.fillStyle = "#000";
+        ctx.font = "16px Arial";
+        ctx.fillText(
+          "Object",
+          180,
+          state === "Floats" ? 140 : state === "Hovers" ? 190 : 240
+        );
+        ctx.fillText("Fluid", 180, 390);
+      }
+    </script>
+  </body>
+</html>
